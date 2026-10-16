@@ -29,11 +29,22 @@ An open-source foundation for building your own online graphic design tool. This
 
 ---
 
+## Deploy to Vercel
+
+This is an Nx monorepo. Import the GitHub repository into Vercel with the **Root Directory left blank**, choose **Next.js**, and use the build settings already declared in `vercel.json`:
+
+- Install command: `pnpm install --frozen-lockfile && pnpm install --filter canva-editor --frozen-lockfile`
+- Build command: `npx nx build canva-web --prod`
+- Output directory: `apps/canva-web/.next`
+- Node.js: `24.x`
+
+The first deployment may still require environment variables and external services. See `apps/canva-web/.env.example` and the project documentation; example values are placeholders, not production credentials. Once connected, pushes to the production branch can trigger deployments automatically.
+
 ## Getting started
 
 ### Prerequisites
 
-- Node.js 20.x
+- Node.js 24.x
 - pnpm (`npm install -g pnpm`)
 - PostgreSQL 15+
 
