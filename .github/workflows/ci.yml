@@ -1,0 +1,49 @@
+name: Canva Clone CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify Nx workspace
+        run: pnpm exec nx show project canva-web
+
+      - name: Build the production web app
+        run: pnpm exec nx build canva-web --prod --skip-nx-cache
+        env:
+          NODE_ENV: production
+          SECRET_COOKIE_PASSWORD: ci-only-placeholder-secret-not-for-production-1234567890
+          API_URL: http://127.0.0.1:1337/api
+          NEXT_PUBLIC_APP_URL: http://localhost:3001
+          NEXT_PUBLIC_UNSPLASH_KEY: ci-placeholder
+          EMAIL_API_KEY: ci-placeholder
+          SMTP_HOST: localhost
+          SMTP_PORT: "1025"
+          SMTP_SECURE: "false"
+          FROM_EMAIL: noreply@example.invalid
+          SMTP_USERNAME: ci-placeholder
+          SMTP_PASS: ci-placeholder
