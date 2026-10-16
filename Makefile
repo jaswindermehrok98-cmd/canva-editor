@@ -23,6 +23,11 @@ gen_i18n:
 	npx nx run i18n:gen.all
 
 restore_db_local:
+	@if [ -z "$(DB_DUMP)" ] || [ ! -f "$(DB_DUMP)" ]; then \
+		echo "ERROR: DB_DUMP must point to a local database backup; production dumps are not stored in Git."; \
+		echo "Example: make restore_db_local DB_DUMP=/path/to/backup.dump DB_NAME=my_database"; \
+		exit 1; \
+	fi
 	@echo "Restoring database (errors may occur due to orphaned foreign keys - this is expected)..."
 	pg_restore \
 		-h localhost \
@@ -34,7 +39,7 @@ restore_db_local:
 		--verbose \
 		--no-owner \
 		--no-privileges \
-		./apps/canva-admin/database/prd_010426.dump 2>&1 | grep -v "ERROR:" || true
+		$(DB_DUMP) 2>&1 | grep -v "ERROR:" || true
 	@echo "Cleaning up orphaned foreign key references..."
 	psql \
 		-h localhost \
