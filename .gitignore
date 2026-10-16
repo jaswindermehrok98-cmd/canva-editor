@@ -27,3 +27,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Database backups and dumps must stay local, not in Git history
+*.dump
+*.backup
+*.sql.gz
